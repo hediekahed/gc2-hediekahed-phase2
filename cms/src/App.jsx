@@ -1,56 +1,54 @@
+import { useState } from "react";
+import Sidebar from "./components/Sidebar";
+
+import LoginPage from "./pages/LoginPage";
+import DashboardPage from "./pages/DashboardPage";
+import LodgingsPage from "./pages/LodgingsPage";
+import CreateLodgingPage from "./pages/CreateLodgingPage";
+import EditLodgingPage from "./pages/EditLodgingPage";
+import UploadImagePage from "./pages/UploadImagePage";
+import UsersPage from "./pages/UsersPage";
+
 export default function App() {
+  const [page, setPage] = useState("login");
+  const [selectedId, setSelectedId] = useState(null);
+
+  if (page === "login") {
+    return <LoginPage setPage={setPage} />;
+  }
+
   return (
-    <div
-      className="min-h-screen flex items-center justify-center bg-cover bg-center"
-      style={{
-        backgroundImage:
-          "url('https://images.unsplash.com/photo-1582719478250-c89cae4dc85b')",
-      }}
-    >
-      {/* overlay */}
-      <div className="absolute inset-0 bg-black/40"></div>
+    <div className="flex min-h-screen bg-gray-100">
+      <Sidebar setPage={setPage} />
 
-      {/* login card */}
-      <div className="relative z-10 w-full max-w-md bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-8">
-        <h1 className="text-3xl font-bold text-purple-700 mb-1 text-center">
-          StayGo CMS
-        </h1>
-        <p className="text-sm text-gray-600 text-center mb-6">
-          Manage your lodging content
-        </p>
+      <div className="flex-1 p-8">
+        {page === "dashboard" && <DashboardPage />}
 
-        <form className="space-y-4">
-          <div>
-            <label className="text-sm text-gray-700">Email</label>
-            <input
-              type="email"
-              placeholder="admin@staygo.com"
-              className="w-full mt-1 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-400"
-            />
-          </div>
+        {page === "lodgings" && (
+          <LodgingsPage
+            setPage={setPage}
+            setSelectedId={setSelectedId}
+          />
+        )}
 
-          <div>
-            <label className="text-sm text-gray-700">Password</label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              className="w-full mt-1 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-400"
-            />
-          </div>
+        {page === "create" && <CreateLodgingPage />}
 
-          <button
-            type="button"
-            className="w-full bg-gradient-to-r from-purple-500 to-indigo-500 text-white py-2 rounded-lg font-semibold hover:opacity-90 transition"
-          >
-            Login
-          </button>
-        </form>
+        {page === "edit" && (
+          <EditLodgingPage
+            id={selectedId}
+            setPage={setPage}
+          />
+        )}
 
-        <p className="text-xs text-gray-500 text-center mt-6">
-          © 2026 StayGo · Travel CMS
-        </p>
+        {page === "upload" && (
+          <UploadImagePage
+            id={selectedId}
+            setPage={setPage}
+          />
+        )}
+
+        {page === "users" && <UsersPage />}
       </div>
     </div>
   );
 }
-
