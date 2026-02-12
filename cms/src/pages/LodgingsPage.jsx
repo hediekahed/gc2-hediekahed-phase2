@@ -1,21 +1,77 @@
 import { useEffect, useState } from "react";
 import { fetchAdminLodgings } from "../api/admin";
+import { Link } from "react-router-dom";
+import axios from "axios";
 
-export default function LodgingsPage({ setPage, setSelectedId }) {
+export default function LodgingsPage() {
   const [lodgings, setLodgings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const token = localStorage.getItem("access_token");
 
   useEffect(() => {
-    const getData = async () => {
-      try {
-        const data = await fetchAdminLodgings();
-        setLodgings(data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    getData();
+    loadData();
   }, []);
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      const data = await fetchAdminLodgings();
+      setLodgings(data);
+    } catch (err) {
+      console.log(err);
+      setError("Failed to load lodgings");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    const confirmDelete = confirm("Delete this lodging?");
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(
+        `http://localhost:3000/admin/lodgings/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+
+      loadData(); // refresh list
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  /* ===== LOADING ===== */
+  if (loading) {
+    return (
+      <div className="bg-white rounded-2xl shadow p-8">
+        Loading lodgings...
+      </div>
+    );
+  }
+
+  /* ===== ERROR ===== */
+  if (error) {
+    return (
+      <div className="bg-red-100 text-red-600 p-6 rounded-2xl">
+        {error}
+      </div>
+    );
+  }
+
+  /* ===== EMPTY ===== */
+  if (!lodgings.length) {
+    return (
+      <div className="bg-white rounded-2xl shadow p-8">
+        No lodgings found
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-2xl shadow p-8">
@@ -37,16 +93,23 @@ export default function LodgingsPage({ setPage, setSelectedId }) {
               <td className="py-2">{item.name}</td>
               <td>{item.location}</td>
               <td>Rp {item.price}</td>
-              <td className="py-2">
-                <button
-                  onClick={() => {
-                    setSelectedId(item.id);
-                    setPage("edit");
-                  }}
+
+              <td className="py-2 space-x-3">
+
+                <Link
+                  to={`/lodgings/edit/${item.id}`}
                   className="text-blue-600 hover:underline"
                 >
                   Edit
+                </Link>
+
+                <button
+                  onClick={() => handleDelete(item.id)}
+                  className="text-red-600 hover:underline"
+                >
+                  Delete
                 </button>
+
               </td>
             </tr>
           ))}

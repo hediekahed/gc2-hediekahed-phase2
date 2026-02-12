@@ -1,10 +1,12 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom"; // ✅ tambah ini
 import PrimaryButton from "../components/PrimaryButton";
 
-export default function LoginPage({ setPage }) {
+export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate(); // ✅ tambah ini
 
   const handleLogin = async () => {
     try {
@@ -18,7 +20,7 @@ export default function LoginPage({ setPage }) {
 
       localStorage.setItem("access_token", data.access_token);
 
-      setPage("dashboard");
+      navigate("/dashboard"); // ✅ ganti ini
     } catch (error) {
       console.log(error);
       alert("Login gagal");

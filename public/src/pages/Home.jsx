@@ -1,11 +1,14 @@
-import { useState } from "react";
-import { lodgingsData } from "../data";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import Navbar from "../components/Navbar";
 import Card from "../components/Card";
 import Pagination from "../components/Pagination";
 import FilterBar from "../components/FilterBar";
 
 function Home() {
+  const [lodgings, setLodgings] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [location, setLocation] = useState("All");
@@ -15,9 +18,31 @@ function Home() {
 
   const itemsPerPage = 3;
 
-  // ===== FILTERING =====
-  let filtered = lodgingsData.filter((item) =>
-    item.name.toLowerCase().includes(search.toLowerCase())
+  /* ================= FETCH FROM API ================= */
+  useEffect(() => {
+    fetchPublicLodgings();
+  }, []);
+
+  const fetchPublicLodgings = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:3000/pub/lodgings"
+      );
+
+      // API kamu pakai res.data.data
+      setLodgings(res.data.data || []);
+
+    } catch (err) {
+      console.log(err);
+      setLodgings([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* ================= FILTERING ================= */
+  let filtered = lodgings.filter((item) =>
+    item?.name?.toLowerCase().includes(search.toLowerCase())
   );
 
   if (location !== "All") {
@@ -25,7 +50,7 @@ function Home() {
   }
 
   if (type !== "All") {
-    filtered = filtered.filter((item) => item.type === type);
+    filtered = filtered.filter((item) => item.Type?.name === type);
   }
 
   if (checkOut) {
@@ -38,14 +63,23 @@ function Home() {
     filtered.sort((a, b) => b.price - a.price);
   }
 
-  // ===== PAGINATION =====
+  /* ================= PAGINATION ================= */
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentData = filtered.slice(startIndex, startIndex + itemsPerPage);
 
+  /* ================= LOADING UI ================= */
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Loading lodgings...
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
-      
+
       <Navbar
         search={search}
         setSearch={setSearch}

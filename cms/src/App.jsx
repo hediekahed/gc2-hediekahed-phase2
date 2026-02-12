@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 
 import LoginPage from "./pages/LoginPage";
@@ -9,46 +9,122 @@ import EditLodgingPage from "./pages/EditLodgingPage";
 import UploadImagePage from "./pages/UploadImagePage";
 import UsersPage from "./pages/UsersPage";
 
+/* ===== PROTECTED ROUTE ===== */
+function ProtectedRoute({ children }) {
+  const token = localStorage.getItem("access_token");
+  return token ? children : <Navigate to="/login" />;
+}
+
 export default function App() {
-  const [page, setPage] = useState("login");
-  const [selectedId, setSelectedId] = useState(null);
-
-  if (page === "login") {
-    return <LoginPage setPage={setPage} />;
-  }
-
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      <Sidebar setPage={setPage} />
+    <Routes>
 
-      <div className="flex-1 p-8">
-        {page === "dashboard" && <DashboardPage />}
+      {/* ===== LOGIN ===== */}
+      <Route path="/login" element={<LoginPage />} />
 
-        {page === "lodgings" && (
-          <LodgingsPage
-            setPage={setPage}
-            setSelectedId={setSelectedId}
-          />
-        )}
+      {/* ===== CMS LAYOUT ===== */}
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <div className="flex min-h-screen bg-gray-100">
+              <Sidebar />
+              <div className="flex-1 p-8">
+                <DashboardPage />
+              </div>
+            </div>
+          </ProtectedRoute>
+        }
+      />
 
-        {page === "create" && <CreateLodgingPage />}
+      {/* ===== DASHBOARD ===== */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <div className="flex min-h-screen bg-gray-100">
+              <Sidebar />
+              <div className="flex-1 p-8">
+                <DashboardPage />
+              </div>
+            </div>
+          </ProtectedRoute>
+        }
+      />
 
-        {page === "edit" && (
-          <EditLodgingPage
-            id={selectedId}
-            setPage={setPage}
-          />
-        )}
+      {/* ===== LODGINGS ===== */}
+      <Route
+        path="/lodgings"
+        element={
+          <ProtectedRoute>
+            <div className="flex min-h-screen bg-gray-100">
+              <Sidebar />
+              <div className="flex-1 p-8">
+                <LodgingsPage />
+              </div>
+            </div>
+          </ProtectedRoute>
+        }
+      />
 
-        {page === "upload" && (
-          <UploadImagePage
-            id={selectedId}
-            setPage={setPage}
-          />
-        )}
+      <Route
+        path="/lodgings/create"
+        element={
+          <ProtectedRoute>
+            <div className="flex min-h-screen bg-gray-100">
+              <Sidebar />
+              <div className="flex-1 p-8">
+                <CreateLodgingPage />
+              </div>
+            </div>
+          </ProtectedRoute>
+        }
+      />
 
-        {page === "users" && <UsersPage />}
-      </div>
-    </div>
+      <Route
+        path="/lodgings/edit/:id"
+        element={
+          <ProtectedRoute>
+            <div className="flex min-h-screen bg-gray-100">
+              <Sidebar />
+              <div className="flex-1 p-8">
+                <EditLodgingPage />
+              </div>
+            </div>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/upload/:id"
+        element={
+          <ProtectedRoute>
+            <div className="flex min-h-screen bg-gray-100">
+              <Sidebar />
+              <div className="flex-1 p-8">
+                <UploadImagePage />
+              </div>
+            </div>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/users"
+        element={
+          <ProtectedRoute>
+            <div className="flex min-h-screen bg-gray-100">
+              <Sidebar />
+              <div className="flex-1 p-8">
+                <UsersPage />
+              </div>
+            </div>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route path="*" element={<Navigate to="/login" />} />
+
+    </Routes>
   );
 }
