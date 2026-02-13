@@ -9,6 +9,9 @@ import EditLodgingPage from "./pages/EditLodgingPage";
 import UploadImagePage from "./pages/UploadImagePage";
 import UsersPage from "./pages/UsersPage";
 
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 /* ===== PROTECTED ROUTE ===== */
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem("access_token");
@@ -17,114 +20,119 @@ function ProtectedRoute({ children }) {
 
 export default function App() {
   return (
-    <Routes>
-
-      {/* ===== LOGIN ===== */}
-      <Route path="/login" element={<LoginPage />} />
-
-      {/* ===== CMS LAYOUT ===== */}
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <div className="flex min-h-screen bg-gray-100">
-              <Sidebar />
-              <div className="flex-1 p-8">
-                <DashboardPage />
-              </div>
-            </div>
-          </ProtectedRoute>
-        }
+    <>
+      {}
+      <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        theme="colored"
       />
 
-      {/* ===== DASHBOARD ===== */}
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            <div className="flex min-h-screen bg-gray-100">
-              <Sidebar />
-              <div className="flex-1 p-8">
-                <DashboardPage />
+      <Routes>
+        {/* ===== LOGIN ===== */}
+        <Route path="/login" element={<LoginPage />} />
+
+        {/* ===== DASHBOARD (ROOT) ===== */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <div className="flex min-h-screen bg-gray-100">
+                <Sidebar />
+                <div className="flex-1 p-8">
+                  <DashboardPage />
+                </div>
               </div>
-            </div>
-          </ProtectedRoute>
-        }
-      />
+            </ProtectedRoute>
+          }
+        />
 
-      {/* ===== LODGINGS ===== */}
-      <Route
-        path="/lodgings"
-        element={
-          <ProtectedRoute>
-            <div className="flex min-h-screen bg-gray-100">
-              <Sidebar />
-              <div className="flex-1 p-8">
-                <LodgingsPage />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <div className="flex min-h-screen bg-gray-100">
+                <Sidebar />
+                <div className="flex-1 p-8">
+                  <DashboardPage />
+                </div>
               </div>
-            </div>
-          </ProtectedRoute>
-        }
-      />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route
-        path="/lodgings/create"
-        element={
-          <ProtectedRoute>
-            <div className="flex min-h-screen bg-gray-100">
-              <Sidebar />
-              <div className="flex-1 p-8">
-                <CreateLodgingPage />
+        <Route
+          path="/lodgings"
+          element={
+            <ProtectedRoute>
+              <div className="flex min-h-screen bg-gray-100">
+                <Sidebar />
+                <div className="flex-1 p-8">
+                  <LodgingsPage />
+                </div>
               </div>
-            </div>
-          </ProtectedRoute>
-        }
-      />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route
-        path="/lodgings/edit/:id"
-        element={
-          <ProtectedRoute>
-            <div className="flex min-h-screen bg-gray-100">
-              <Sidebar />
-              <div className="flex-1 p-8">
-                <EditLodgingPage />
+        <Route
+          path="/lodgings/create"
+          element={
+            <ProtectedRoute>
+              <div className="flex min-h-screen bg-gray-100">
+                <Sidebar />
+                <div className="flex-1 p-8">
+                  <CreateLodgingPage />
+                </div>
               </div>
-            </div>
-          </ProtectedRoute>
-        }
-      />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route
-        path="/upload/:id"
-        element={
-          <ProtectedRoute>
-            <div className="flex min-h-screen bg-gray-100">
-              <Sidebar />
-              <div className="flex-1 p-8">
-                <UploadImagePage />
+        <Route
+          path="/lodgings/edit/:id"
+          element={
+            <ProtectedRoute>
+              <div className="flex min-h-screen bg-gray-100">
+                <Sidebar />
+                <div className="flex-1 p-8">
+                  <EditLodgingPage />
+                </div>
               </div>
-            </div>
-          </ProtectedRoute>
-        }
-      />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route
-        path="/users"
-        element={
-          <ProtectedRoute>
-            <div className="flex min-h-screen bg-gray-100">
-              <Sidebar />
-              <div className="flex-1 p-8">
-                <UsersPage />
+        <Route
+          path="/upload/:id"
+          element={
+            <ProtectedRoute>
+              <div className="flex min-h-screen bg-gray-100">
+                <Sidebar />
+                <div className="flex-1 p-8">
+                  <UploadImagePage />
+                </div>
               </div>
-            </div>
-          </ProtectedRoute>
-        }
-      />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route path="*" element={<Navigate to="/login" />} />
+        <Route
+          path="/users"
+          element={
+            <ProtectedRoute>
+              <div className="flex min-h-screen bg-gray-100">
+                <Sidebar />
+                <div className="flex-1 p-8">
+                  <UsersPage />
+                </div>
+              </div>
+            </ProtectedRoute>
+          }
+        />
 
-    </Routes>
+        <Route path="*" element={<Navigate to="/login" />} />
+      </Routes>
+    </>
   );
 }
