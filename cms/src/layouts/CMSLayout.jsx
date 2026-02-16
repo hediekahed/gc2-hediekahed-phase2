@@ -1,5 +1,5 @@
 import Sidebar from "../components/Sidebar";
-import { Outlet } from "react-router-dom";
+import { Outlet } from "react-router";
 
 export default function CMSLayout() {
   return (
